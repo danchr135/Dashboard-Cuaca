@@ -1,0 +1,14 @@
+# Local Python files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Local environment and secrets
+.venv/
+venv/
+.env
+.streamlit/secrets.toml
+
+# Large local source data should be uploaded through Git LFS or external storage
+# when it is intentionally versioned.
+data/data_cuaca.csv
