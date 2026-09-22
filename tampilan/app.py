@@ -16,43 +16,27 @@ st.caption('Pantau perubahan suhu, tekanan udara, dan kecepatan angin dari waktu
 
 @st.cache_data
 def load_data():
-    # Menggunakan konfigurasi cloud_config dari [postgres]
     try:
-        cloud_config = st.secrets.get('postgres')
-    except Exception:
-        cloud_config = None
-
-    if cloud_config:
-        connection_config = dict(cloud_config)
-    else:
-        # Cadangan jika dijalankan di localhost komputer Anda
-        connection_config = {
-            'host': 'localhost',
-            'port': 5432,
-            'user': 'postgres',
-            'password': '',
-            'database': 'database_cuaca',
-            'sslmode': 'disable'
-        }
-
-    try:
-        # Menyambungkan menggunakan driver psycopg2 untuk PostgreSQL
+        # Dipaksa langsung mengambil data dari [postgres] di rahasia cloud
+        connection_config = st.secrets["postgres"]
+        
+        # Menyambungkan menggunakan driver psycopg2 ke Aiven Cloud
         conn = psycopg2.connect(
             host=connection_config['host'],
-            port=connection_config['port'],
-            database=connection_config['dbname'] if 'dbname' in connection_config else connection_config['database'],
+            port=int(connection_config['port']),
+            database=connection_config['dbname'],
             user=connection_config['user'],
             password=connection_config['password'],
             sslmode=connection_config.get('sslmode', 'no-verify')
         )
     except Exception as error:
         st.error(
-            f'Database tidak dapat dihubungi. Pastikan isi Secrets di Streamlit Cloud '
-            f'sudah menggunakan konfigurasi [postgres] yang sesuai dengan Aiven Cloud Anda. Error: {error}'
+            f'Gagal terhubung ke Aiven Cloud. Pastikan kolom Secrets di Streamlit Cloud '
+            f'sudah Anda isi dengan benar dan klik Save. Detail kendala: {error}'
         )
         st.stop()
 
-    # PostgreSQL mewajibkan penulisan nama skema (public.nama_tabel) agar lebih aman
+    # Eksekusi query mengambil data cuaca Anda
     query = (
         'SELECT tanggal, rata_rata_suhu, rata_rata_tekanan, '
         'rekor_angin_terkencang FROM public.summary_wheater'
