@@ -65,9 +65,25 @@ oleh dashboard.
 - Data ringkasan: MySQL `dataset_cuaca.summary_wheater`
 - Visualisasi: aplikasi Streamlit di `tampilan/app.py`
 
-Konfigurasi koneksi saat ini menggunakan MySQL lokal dengan user `root` tanpa
-password. Untuk deployment, gunakan environment variable atau secrets
-Streamlit, bukan menyimpan kredensial di source code.
+Saat dijalankan lokal tanpa konfigurasi tambahan, aplikasi memakai MySQL lokal
+dengan database `dataset_cuaca`, user `root`, dan password kosong. Saat section
+`[mysql]` tersedia di Streamlit Secrets, aplikasi memakai konfigurasi tersebut.
+
+Untuk Streamlit Cloud, buka **Manage app > Settings > Secrets** dan isi contoh
+berikut dengan kredensial database MySQL yang dapat diakses dari internet:
+
+```toml
+[mysql]
+host = "hostname-database-anda"
+port = 3306
+user = "nama-user"
+password = "password-database"
+database = "dataset_cuaca"
+```
+
+Jangan menaruh password database di source code atau commit ke GitHub. MySQL
+yang hanya berjalan di `localhost` komputer sendiri tidak dapat diakses oleh
+Streamlit Cloud.
 
 ## Validasi Data
 

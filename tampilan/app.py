@@ -16,9 +16,29 @@ st.caption('Pantau perubahan suhu, tekanan udara, dan kecepatan angin dari waktu
 
 @st.cache_data
 def load_data():
-    conn = mysql.connector.connect(
-        host='localhost', user='root', password='', database='dataset_cuaca'
-    )
+    connection_config = {
+        'host': 'localhost',
+        'user': 'root',
+        'password': '',
+        'database': 'dataset_cuaca',
+    }
+    try:
+        cloud_config = st.secrets.get('mysql')
+    except Exception:
+        cloud_config = None
+    if cloud_config:
+        connection_config = dict(cloud_config)
+
+    try:
+        conn = mysql.connector.connect(**connection_config)
+    except mysql.connector.Error as error:
+        st.error(
+            'Database tidak dapat dihubungi. Untuk Streamlit Cloud, isi '
+            'Secrets dengan konfigurasi [mysql] dan gunakan database MySQL '
+            'yang dapat diakses dari internet.'
+        )
+        st.stop()
+
     query = (
         'SELECT tanggal, rata_rata_suhu, rata_rata_tekanan, '
         'rekor_angin_terkencang FROM summary_wheater'
