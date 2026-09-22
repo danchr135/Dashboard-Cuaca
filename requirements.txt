@@ -1,6 +1,4 @@
-matplotlib
-mysql-connector-python
-pandas
-pymysql
-sqlalchemy
 streamlit
+pandas
+matplotlib
+psycopg2-binary

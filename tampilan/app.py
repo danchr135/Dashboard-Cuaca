@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import mysql.connector
+import psycopg2  # Mengganti mysql.connector ke psycopg2
 import pandas as pd
 import streamlit as st
 
@@ -16,32 +16,46 @@ st.caption('Pantau perubahan suhu, tekanan udara, dan kecepatan angin dari waktu
 
 @st.cache_data
 def load_data():
-    connection_config = {
-        'host': 'localhost',
-        'user': 'root',
-        'password': '',
-        'database': 'database_cuaca',
-    }
+    # Menggunakan konfigurasi cloud_config dari [postgres]
     try:
-        cloud_config = st.secrets.get('mysql')
+        cloud_config = st.secrets.get('postgres')
     except Exception:
         cloud_config = None
+
     if cloud_config:
         connection_config = dict(cloud_config)
+    else:
+        # Cadangan jika dijalankan di localhost komputer Anda
+        connection_config = {
+            'host': 'localhost',
+            'port': 5432,
+            'user': 'postgres',
+            'password': '',
+            'database': 'database_cuaca',
+            'sslmode': 'disable'
+        }
 
     try:
-        conn = mysql.connector.connect(**connection_config)
-    except mysql.connector.Error as error:
+        # Menyambungkan menggunakan driver psycopg2 untuk PostgreSQL
+        conn = psycopg2.connect(
+            host=connection_config['host'],
+            port=connection_config['port'],
+            database=connection_config['dbname'] if 'dbname' in connection_config else connection_config['database'],
+            user=connection_config['user'],
+            password=connection_config['password'],
+            sslmode=connection_config.get('sslmode', 'no-verify')
+        )
+    except Exception as error:
         st.error(
-            'Database tidak dapat dihubungi. Untuk Streamlit Cloud, isi '
-            'Secrets dengan konfigurasi [mysql] dan gunakan database MySQL '
-            'yang dapat diakses dari internet.'
+            f'Database tidak dapat dihubungi. Pastikan isi Secrets di Streamlit Cloud '
+            f'sudah menggunakan konfigurasi [postgres] yang sesuai dengan Aiven Cloud Anda. Error: {error}'
         )
         st.stop()
 
+    # PostgreSQL mewajibkan penulisan nama skema (public.nama_tabel) agar lebih aman
     query = (
         'SELECT tanggal, rata_rata_suhu, rata_rata_tekanan, '
-        'rekor_angin_terkencang FROM summary_wheater'
+        'rekor_angin_terkencang FROM public.summary_wheater'
     )
     df = pd.read_sql(query, conn)
     conn.close()
