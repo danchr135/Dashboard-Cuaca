@@ -19,7 +19,7 @@ def load_data():
     try:
         # Dipaksa langsung mengambil data dari [postgres] di rahasia cloud
         connection_config = st.secrets["postgres"]
-        
+
         # Menyambungkan menggunakan driver psycopg2 ke Aiven Cloud
         conn = psycopg2.connect(
             host=connection_config['host'],
