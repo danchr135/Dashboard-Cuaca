@@ -17,18 +17,11 @@ st.caption('Pantau perubahan suhu, tekanan udara, dan kecepatan angin dari waktu
 @st.cache_data
 def load_data():
     try:
-        # Dipaksa langsung mengambil data dari [postgres] di rahasia cloud
-        connection_config = st.secrets["postgres"]
+        # Mengambil baris URL langsung dari secrets di cloud
+        db_url = st.secrets["postgres"]["url"]
 
-        # Menyambungkan menggunakan driver psycopg2 ke Aiven Cloud
-        conn = psycopg2.connect(
-            host=connection_config['host'],
-            port=int(connection_config['port']),
-            database=connection_config['dbname'],
-            user=connection_config['user'],
-            password=connection_config['password'],
-            sslmode=connection_config.get('sslmode', 'no-verify')
-        )
+        # Menyambungkan menggunakan driver psycopg2 lewat string URL
+        conn = psycopg2.connect(db_url)
     except Exception as error:
         st.error(
             f'Gagal terhubung ke Aiven Cloud. Pastikan kolom Secrets di Streamlit Cloud '
