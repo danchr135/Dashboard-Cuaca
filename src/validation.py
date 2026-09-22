@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 db_user = 'root'
 db_password = ''
 db_host = 'localhost'
-db_name = 'dataset_cuaca'
+db_name = 'database_cuaca'
 
 engine = create_engine(
     f'mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}'

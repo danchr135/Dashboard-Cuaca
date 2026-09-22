@@ -20,7 +20,7 @@ def load_data():
         'host': 'localhost',
         'user': 'root',
         'password': '',
-        'database': 'dataset_cuaca',
+        'database': 'database_cuaca',
     }
     try:
         cloud_config = st.secrets.get('mysql')

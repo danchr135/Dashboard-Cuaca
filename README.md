@@ -22,7 +22,7 @@ dibaca. Nama script dipertahankan sesuai struktur proyek saat ini.
 CSV mentah
   -> src/extact.py (baca dan cek jumlah baris)
   -> src/load_data.py (muat ke MySQL)
-  -> dataset_cuaca.staging_weather
+  -> database_cuaca.staging_weather
   -> proses agregasi di database
   -> dataset_cuaca.summary_wheater
   -> tampilan/app.py (query dan visualisasi Streamlit)
@@ -61,12 +61,12 @@ oleh dashboard.
 ## Penyimpanan
 
 - Data mentah: `data/data_cuaca.csv`
-- Data staging: MySQL `dataset_cuaca.staging_weather`
-- Data ringkasan: MySQL `dataset_cuaca.summary_wheater`
+- Data staging: MySQL `database_cuaca.staging_weather`
+- Data ringkasan: MySQL `database_cuaca.summary_wheater`
 - Visualisasi: aplikasi Streamlit di `tampilan/app.py`
 
 Saat dijalankan lokal tanpa konfigurasi tambahan, aplikasi memakai MySQL lokal
-dengan database `dataset_cuaca`, user `root`, dan password kosong. Saat section
+dengan database `database_cuaca`, user `root`, dan password kosong. Saat section
 `[mysql]` tersedia di Streamlit Secrets, aplikasi memakai konfigurasi tersebut.
 
 Untuk Streamlit Cloud, buka **Manage app > Settings > Secrets** dan isi contoh
@@ -78,7 +78,7 @@ host = "hostname-database-anda"
 port = 3306
 user = "nama-user"
 password = "password-database"
-database = "dataset_cuaca"
+database = "database_cuaca"
 ```
 
 Jangan menaruh password database di source code atau commit ke GitHub. MySQL
