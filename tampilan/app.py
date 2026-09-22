@@ -40,11 +40,11 @@ def load_data():
 
 
 df = load_data()
-df['tanggal'] = pd.to_datetime(df['tanggal'])
+df['tanggal'] = pd.to_datetime(df['tanggal'], format='mixed', errors='coerce')
 numeric_columns = ['rata_rata_suhu', 'rata_rata_tekanan', 'rekor_angin_terkencang']
 df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce')
 df['rata_rata_suhu'] = (df['rata_rata_suhu'] - 32) * 5 / 9
-df = df.dropna(subset=['tanggal']).sort_values('tanggal')
+df = df.dropna(subset=['tanggal'] + numeric_columns).sort_values('tanggal')
 
 latest = df.iloc[-1]
 metric_columns = st.columns(3)
